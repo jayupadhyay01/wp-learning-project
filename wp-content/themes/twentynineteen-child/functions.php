@@ -3,10 +3,10 @@
 add_action('wp_enqueue_scripts', 'my_theme_enqueue_styles');
 function my_theme_enqueue_styles()
 {
-
     $parent_style = 'parent-style'; // This is 'twentynineteen-style' for the Twenty Nineteen theme.
 
     wp_enqueue_style($parent_style, get_template_directory_uri() . '/style.css');
+
     wp_enqueue_style('child-style',
         get_stylesheet_directory_uri() . '/style.css',
         array($parent_style),
@@ -93,3 +93,45 @@ function create_blog_taxonomies()
 
     register_taxonomy('blog-type', array('blog'), $args_blog_type);
 }
+
+//Register Meta Box
+function display_settings_meta_box()
+{
+    $post_type_array = array('post','blog','page');
+    add_meta_box('display-setting-box-id', esc_html__('Display Settings', 'text-domain'), 'display_settings_box_callback', $post_type_array, 'side', 'high');
+}
+
+add_action('add_meta_boxes', 'display_settings_meta_box');
+
+//Add field
+function display_settings_box_callback($meta_id)
+{
+
+    $title_field = get_post_meta($meta_id->ID, 'post_display_options', true);
+
+    // check title_field is empty or not and set as yes
+    ?>
+    <label for="title_field"
+           style="width:250px; display:inline-block;"><?php echo esc_html__('Do You Want To Display This Blog In Listings?', 'text-domain'); ?>
+    </label>
+    <select name="disp_options" id="disp_options" style="width:250px;">
+        <option value="yes" <?php selected('yes',$title_field, true);  ?>>Yes</option>
+        <option value="no" <?php selected('no',$title_field, true); ?>>No</option>
+    </select>
+    <?php
+}
+
+function save_metabox_callback($post_id)
+{
+    $value = $_POST['disp_options'];
+
+    $title_field = get_post_meta($post_id->ID, 'post_display_options', true);
+
+    if( isset( $title_field ) && !empty( $title_field ) ) {
+        add_post_meta($post_id, 'post_display_options', $value);
+    } else {
+        update_post_meta($post_id, 'post_display_options', $value);
+    }
+
+}
+add_action('save_post', 'save_metabox_callback');
