@@ -167,13 +167,13 @@ function blog_count_dashboard_widget_function()
 
     if ($blog_count->have_posts()) :
         while ($blog_count->have_posts()) : $blog_count->the_post();
-            $count_num = get_post_meta(get_the_ID(), 'visit_count',true);
+            $count_num = get_post_meta(get_the_ID(), 'visit_count', true);
             ?>
             <tr>
                 <td style="border: 2px solid; text-align: center"><?php the_title(); ?> </td>
-                <td style="border: 2px solid; text-align: center"><?php  echo $count_num; ?></td>
+                <td style="border: 2px solid; text-align: center"><?php echo $count_num; ?></td>
             </tr>
-            <?php
+        <?php
 
         endwhile;
         ?>
@@ -196,7 +196,6 @@ function add_count_dashboard_widgets()
 add_action('wp_dashboard_setup', 'add_count_dashboard_widgets');
 
 
-
 //Register Meta For Visit Count  Box on Page
 function page_display_visit_count_meta_box()
 {
@@ -214,71 +213,126 @@ function page_display_visit_count()
     <label for="title_field"
            style="width:250px; display:inline-block;"><b><?php echo esc_html__('Visit Count Of This Blog: ', 'text-domain'); ?></b>
     </label>
-    <h2 style="text-align: justify;"><b>Count: <?php echo get_post_meta(get_the_ID(), 'visit_count',true); ?></b></h2>
+    <h2 style="text-align: justify;"><b>Count: <?php echo get_post_meta(get_the_ID(), 'visit_count', true); ?></b></h2>
     <?php
 }
 
 // register my custom widget
 
 // Register and load the widget
-function wpb_load_widget() {
-    register_widget( 'wpb_widget' );
+function jy_load_widget()
+{
+    register_widget('jy_first_widget');
 }
-add_action( 'widgets_init', 'wpb_load_widget' );
+
+add_action('widgets_init', 'jy_load_widget');
 
 // Creating the widget
-class wpb_widget extends WP_Widget {
+class jy_first_widget extends WP_Widget
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct(
 
 // Base ID of your widget
-            'wpb_widget',
+            'jy_first_widget',
 
 // Widget name will appear in UI
-            __('WPBeginner Widget', 'wpb_widget_domain'),
+            __('First Widget', 'jy_first_widget_domain'),
 
 // Widget description
-            array( 'description' => __( 'Sample widget based on WPBeginner Tutorial', 'wpb_widget_domain' ), )
+            array('description' => __('My First Widget Creation', 'jy_first_widget_domain'),)
         );
     }
 
 // Creating widget front-end
 
-    public function widget( $args, $instance ) {
-        $title = apply_filters( 'widget_title', $instance['title'] );
+    public function widget($args, $instance)
+    {
+        ?>
+        <div class="custom-widget-one">
+            <h2><?php echo $instance['title'] ?></h2>
+            <h4><?php echo $instance['tag_line'] ?></h4>
+            <?php
+            $post_type = $instance['post_type'];
+            $args = array(
+                'post_type' => $post_type,
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+                'order' => 'ASC',
+                'order_by' => 'date',
+            );
+            $posts = new WP_Query($args);
+            if (have_posts()) :
+                while ($posts->have_posts()) : $posts->the_post();
+                    ?>
+                    <h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+                <?php
+                endwhile;
+            else :
 
-// before and after widget arguments are defined by themes
-        echo $args['before_widget'];
-        if ( ! empty( $title ) )
-            echo $args['before_title'] . $title . $args['after_title'];
+                echo('No Post Found');
 
-// This is where you run the code and display the output
-        echo __( 'Hello, Jay!', 'wpb_widget_domain' );
-        echo $args['after_widget'];
+            endif;
+            ?>
+            <h4><?php echo $instance['tag_line'] ?></h4>
+        </div>
+        <?php
     }
 
 // Widget Backend
-    public function form( $instance ) {
-        if ( isset( $instance[ 'title' ] ) ) {
-            $title = $instance[ 'title' ];
-        }
-        else {
-            $title = __( 'New title', 'wpb_widget_domain' );
+    public function form($instance)
+    {
+        if (isset($instance['title']) && isset($instance['tag_line']) && isset($instance['post_type'])) {
+            $title = $instance['title'];
+            $tag_line = $instance['tag_line'];
+            $post_type = $instance['post_type'];
+        } else {
+            $title = __('New title', 'jy_first_widget_domain');
+            $tag_line = __('New Tag Line', 'jy_first_widget_domain');
+            $post_type = __('post', 'jy_first_widget_domain');
         }
 // Widget admin form
         ?>
         <p>
-            <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
+                   name="<?php echo $this->get_field_name('title'); ?>" type="text"
+                   value="<?php echo esc_attr($title); ?>"/>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('tag_line'); ?>"><?php _e('TagLine:'); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id('tag_line'); ?>"
+                   name="<?php echo $this->get_field_name('tag_line'); ?>" type="text"
+                   value="<?php echo esc_attr($tag_line); ?>"/>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('post_type'); ?>"><?php _e('Custom Post Type:'); ?></label>
+            <input class="" id="<?php echo $this->get_field_id('post_type'); ?>"
+                   name="<?php echo $this->get_field_name('post_type'); ?>" type="text"
+                   value="<?php echo esc_attr($post_type); ?>"/>
         </p>
         <?php
     }
 
 // Updating widget replacing old instances with new
-    public function update( $new_instance, $old_instance ) {
+    public function update($new_instance, $old_instance)
+    {
         $instance = array();
-        $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['tag_line'] = (!empty($new_instance['tag_line'])) ? strip_tags($new_instance['tag_line']) : '';
+        $instance['post_type'] = (!empty($new_instance['post_type'])) ? strip_tags($new_instance['post_type']) : '';
         return $instance;
     }
 } // Class wpb_widget ends here
+
+
+
+
+
+
+
+
+
+

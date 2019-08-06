@@ -17,7 +17,6 @@ get_header(); ?>
                 'fields' => 'id=>name'
             ));
 
-
             foreach ($custom_terms as $key => $names) {
                 $args = array(
                     'post_type' => 'blog',
@@ -27,7 +26,7 @@ get_header(); ?>
                         array(                              // restrict posts based on meta values
                             'key'     => 'post_display_options',  // which meta to query
                             'value'   => 'yes',  // value for comparison
-                            'compare' => '=',          // method of comparison
+                            'compare' => '=',    // method of comparison
                              ),
                     ),
                     'tax_query' => array(
@@ -37,7 +36,6 @@ get_header(); ?>
                             'terms' => $key,
                         )
                     ),
-
                 );
 
                 $posts = new WP_Query($args);
