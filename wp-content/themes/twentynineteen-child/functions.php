@@ -249,50 +249,56 @@ class jy_first_widget extends WP_Widget
 
     public function widget($args, $instance)
     {
-        ?>
-        <div class="custom-widget-one">
-            <h2><?php echo $instance['title'] ?></h2>
-            <h4><?php echo $instance['tag_line'] ?></h4>
-            <?php
-            $post_type = $instance['post_type'];
-            $limit =  (!empty($instance['limit']) ? $instance['limit'] : 5);
-            echo $limit;
-            $args = array(
-                'post_type' => $post_type,
-                'post_status' => 'publish',
-                'posts_per_page' => $limit,
-                'order' => 'ASC',
-                'order_by' => 'date',
-            );
-            $posts = new WP_Query($args);
-            if ($posts->have_posts()) :
-                while ($posts->have_posts()) : $posts->the_post();
-                    ?>
-                    <h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
-                <?php
-                endwhile;
-            else :
-                echo('No Post Found');
-            endif;
+        $display_widget_option = $instance['display_widget_option'];
+        if($display_widget_option == "yes") {
+
+
             ?>
-            <h4><?php echo $instance['tag_line'] ?></h4>
-        </div>
-        <?php
+            <div class="custom-widget-one">
+                <h2><?php echo $instance['title'] ?></h2>
+                <h4><?php echo $instance['tag_line'] ?></h4>
+                <?php
+                $post_type = $instance['post_type'];
+                $limit = (!empty($instance['limit']) ? $instance['limit'] : 5);
+                $args = array(
+                    'post_type' => $post_type,
+                    'post_status' => 'publish',
+                    'posts_per_page' => $limit,
+                    'order' => 'ASC',
+                    'order_by' => 'date',
+                );
+                $posts = new WP_Query($args);
+                if ($posts->have_posts()) :
+                    while ($posts->have_posts()) : $posts->the_post();
+                        ?>
+                        <h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+                    <?php
+                    endwhile;
+                else :
+                    echo('No Post Found');
+                endif;
+                ?>
+                <h4><?php echo $instance['tag_line'] ?></h4>
+            </div>
+            <?php
+        }
     }
 
 // Widget Backend
     public function form($instance)
     {
-        if (isset($instance['title']) && isset($instance['tag_line']) && isset($instance['post_type']) && isset($instance['limit'])) {
+        if (isset($instance['title']) && isset($instance['tag_line']) && isset($instance['post_type']) && isset($instance['limit']) && isset($instance['display_widget_option'])) {
             $title = $instance['title'];
             $tag_line = $instance['tag_line'];
             $post_type = $instance['post_type'];
             $limit = (!empty($instance['limit']) ? $instance['limit'] : 5);
+            $display_widget_option = $instance['display_widget_option'];
         } else {
             $title = __('New title', 'jy_first_widget_domain');
             $tag_line = __('New Tag Line', 'jy_first_widget_domain');
             $post_type = __('post', 'jy_first_widget_domain');
             $limit = __(5, 'jy_first_widget_domain');
+            $display_widget_option = __('yes', 'jy_first_widget_domain');
         }
 // Widget admin form
         ?>
@@ -328,7 +334,16 @@ class jy_first_widget extends WP_Widget
             <label for="<?php echo $this->get_field_id('limit'); ?>"><?php _e('Post Limit:'); ?></label>
             <input class="tiny-text" id="<?php echo $this->get_field_id('limit'); ?>"
                    name="<?php echo $this->get_field_name('limit'); ?>" type="number"
-                   value="<?php echo esc_attr( $limit ); ?>"/>
+                   value="<?php echo esc_attr($limit); ?>"  min="-1" max="10"/>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('display_widget_option'); ?>"><?php _e('Display Widget ?:'); ?></label>
+            <input class="tiny-text" id="<?php echo $this->get_field_id('display_widget_option'); ?>"
+                   name="<?php echo $this->get_field_name('display_widget_option'); ?>" type="radio"
+                   value="yes" <?php if( ($display_widget_option == "yes" ) ){ echo 'checked'; } ?> />Yes
+            <input class="tiny-text" id="<?php echo $this->get_field_id('display_widget_option'); ?>"
+                   name="<?php echo $this->get_field_name('display_widget_option'); ?>" type="radio"
+                   value="no" <?php if( isset($display_widget_option) && ($display_widget_option == "no" ) ){ echo 'checked'; } ?> />No
         </p>
         <?php
     }
@@ -341,6 +356,7 @@ class jy_first_widget extends WP_Widget
         $instance['tag_line'] = (!empty($new_instance['tag_line'])) ? strip_tags($new_instance['tag_line']) : '';
         $instance['post_type'] = (!empty($new_instance['post_type'])) ? strip_tags($new_instance['post_type']) : '';
         $instance['limit'] = (!empty($new_instance['limit'])) ? strip_tags($new_instance['limit']) : '';
+        $instance['display_widget_option'] = (!empty($new_instance['display_widget_option'])) ? strip_tags($new_instance['display_widget_option']) : '';
         return $instance;
     }
 } // Class wpb_widget ends here
