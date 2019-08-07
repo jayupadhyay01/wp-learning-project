@@ -123,9 +123,9 @@ function display_settings_box_callback($meta_id)
 
 function save_metabox_callback($post_id)
 {
-    $value = $_POST['disp_options'];
+    $value = isset($_POST['disp_options']);
 
-    $title_field = get_post_meta($post_id->ID, 'post_display_options', true);
+    $title_field = get_post_meta($post_id, 'post_display_options', true);
 
     if (isset($title_field) && !empty($title_field)) {
         add_post_meta($post_id, 'post_display_options', $value);
@@ -181,7 +181,6 @@ function blog_count_dashboard_widget_function()
     <?php
     else :
         echo('No Visit Count');
-
     endif;
 
 }
@@ -227,7 +226,7 @@ function jy_load_widget()
 
 add_action('widgets_init', 'jy_load_widget');
 
-// Creating the widget
+// Creating My Custom widget
 class jy_first_widget extends WP_Widget
 {
 
@@ -256,24 +255,24 @@ class jy_first_widget extends WP_Widget
             <h4><?php echo $instance['tag_line'] ?></h4>
             <?php
             $post_type = $instance['post_type'];
+            $limit =  (!empty($instance['limit']) ? $instance['limit'] : 5);
+            echo $limit;
             $args = array(
                 'post_type' => $post_type,
                 'post_status' => 'publish',
-                'posts_per_page' => -1,
+                'posts_per_page' => $limit,
                 'order' => 'ASC',
                 'order_by' => 'date',
             );
             $posts = new WP_Query($args);
-            if (have_posts()) :
+            if ($posts->have_posts()) :
                 while ($posts->have_posts()) : $posts->the_post();
                     ?>
                     <h5><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
                 <?php
                 endwhile;
             else :
-
                 echo('No Post Found');
-
             endif;
             ?>
             <h4><?php echo $instance['tag_line'] ?></h4>
@@ -284,14 +283,16 @@ class jy_first_widget extends WP_Widget
 // Widget Backend
     public function form($instance)
     {
-        if (isset($instance['title']) && isset($instance['tag_line']) && isset($instance['post_type'])) {
+        if (isset($instance['title']) && isset($instance['tag_line']) && isset($instance['post_type']) && isset($instance['limit'])) {
             $title = $instance['title'];
             $tag_line = $instance['tag_line'];
             $post_type = $instance['post_type'];
+            $limit = (!empty($instance['limit']) ? $instance['limit'] : 5);
         } else {
             $title = __('New title', 'jy_first_widget_domain');
             $tag_line = __('New Tag Line', 'jy_first_widget_domain');
             $post_type = __('post', 'jy_first_widget_domain');
+            $limit = __(5, 'jy_first_widget_domain');
         }
 // Widget admin form
         ?>
@@ -307,11 +308,27 @@ class jy_first_widget extends WP_Widget
                    name="<?php echo $this->get_field_name('tag_line'); ?>" type="text"
                    value="<?php echo esc_attr($tag_line); ?>"/>
         </p>
+        <p><?php
+            $post_types = get_post_types();
+            unset($post_types['attachment'], $post_types['revision'], $post_types['nav_menu_item'], $post_types['custom_css'], $post_types['customize_changeset'], $post_types['oembed_cache'], $post_types['user_request'], $post_types['wp_block']);
+            ?>
+            <label for="<?php echo $this->get_field_id('post_type'); ?>"><?php _e('Select Post Type:'); ?></label>
+            <select name="<?php echo $this->get_field_name('post_type'); ?>"
+                    class="widefat" <?php echo $this->get_field_id('post_type'); ?>>
+                <option value=''>Select Post Type</option>
+                <?php
+                foreach ($post_types as $each_post) {
+                    ?>
+                    <option value='<?php echo $each_post; ?>' <?php selected($each_post, $post_type, true); ?>><?php echo $each_post; ?></option>
+                <?php }
+                ?>
+            </select>
+        </p>
         <p>
-            <label for="<?php echo $this->get_field_id('post_type'); ?>"><?php _e('Custom Post Type:'); ?></label>
-            <input class="" id="<?php echo $this->get_field_id('post_type'); ?>"
-                   name="<?php echo $this->get_field_name('post_type'); ?>" type="text"
-                   value="<?php echo esc_attr($post_type); ?>"/>
+            <label for="<?php echo $this->get_field_id('limit'); ?>"><?php _e('Post Limit:'); ?></label>
+            <input class="tiny-text" id="<?php echo $this->get_field_id('limit'); ?>"
+                   name="<?php echo $this->get_field_name('limit'); ?>" type="number"
+                   value="<?php echo esc_attr( $limit ); ?>"/>
         </p>
         <?php
     }
@@ -323,16 +340,7 @@ class jy_first_widget extends WP_Widget
         $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
         $instance['tag_line'] = (!empty($new_instance['tag_line'])) ? strip_tags($new_instance['tag_line']) : '';
         $instance['post_type'] = (!empty($new_instance['post_type'])) ? strip_tags($new_instance['post_type']) : '';
+        $instance['limit'] = (!empty($new_instance['limit'])) ? strip_tags($new_instance['limit']) : '';
         return $instance;
     }
 } // Class wpb_widget ends here
-
-
-
-
-
-
-
-
-
-
