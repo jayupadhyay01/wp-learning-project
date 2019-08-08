@@ -337,13 +337,13 @@ class jy_first_widget extends WP_Widget
                    value="<?php echo esc_attr($limit); ?>"  min="-1" max="10"/>
         </p>
         <p>
-            <label for="<?php echo $this->get_field_id('display_widget_option'); ?>"><?php _e('Display Widget ?:'); ?></label>
-            <input class="tiny-text" id="<?php echo $this->get_field_id('display_widget_option'); ?>"
+            <label for="<?php echo $this->get_field_id('display_widget_option'); ?>"><?php _e('Display Widget ? : '); ?></label>
+            <input id="<?php echo $this->get_field_id('display_widget_option'); ?>"
                    name="<?php echo $this->get_field_name('display_widget_option'); ?>" type="radio"
-                   value="yes" <?php if( ($display_widget_option == "yes" ) ){ echo 'checked'; } ?> />Yes
-            <input class="tiny-text" id="<?php echo $this->get_field_id('display_widget_option'); ?>"
+                   value="yes" <?php if( ($display_widget_option == "yes" ) ){ echo 'checked'; } ?> /> Yes
+            <input id="<?php echo $this->get_field_id('display_widget_option'); ?>"
                    name="<?php echo $this->get_field_name('display_widget_option'); ?>" type="radio"
-                   value="no" <?php if( isset($display_widget_option) && ($display_widget_option == "no" ) ){ echo 'checked'; } ?> />No
+                   value="no" <?php if( isset($display_widget_option) && ($display_widget_option == "no" ) ){ echo 'checked'; } ?> /> No
         </p>
         <?php
     }
