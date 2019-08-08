@@ -46,7 +46,7 @@ get_header();
         $args = array(
             'post_type' => 'blog',
             'post_status' => 'publish',
-            'posts_per_page' => 3,
+            'posts_per_page' => -1,
             'order' => 'ASC',
             'order_by' => 'date',
 //            'paged' => $paged
