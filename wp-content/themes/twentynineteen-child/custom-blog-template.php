@@ -39,7 +39,7 @@ get_header();
 ?>
 
     <div class="wrap">
-        <a id="primary" class="content-area">
+        <div id="primary" class="content-area">
 <?php
 //        $custom_terms = wp_get_post_terms('blog-type');
 //$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
@@ -62,7 +62,6 @@ get_header();
             <p><strong>Type : </strong><?php echo (isset($blog_type[0]->name)) ? $blog_type[0]->name : 'No Type Assigned';  ?></p>
             <p><?php the_content(); ?></p>
             <?php
-
             endwhile;
 //            wpex_pagination();
         else :
@@ -71,6 +70,7 @@ get_header();
         wp_reset_query();
 ?>
         </div>
+    </div>
 <?php
 get_footer();
 
