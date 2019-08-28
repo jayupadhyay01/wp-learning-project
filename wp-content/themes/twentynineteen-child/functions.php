@@ -4,6 +4,8 @@ add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
 function my_theme_enqueue_styles() {
 	$parent_style = 'parent-style'; // This is 'twentynineteen-style' for the Twenty Nineteen theme.
 
+	wp_enqueue_style( 'jquery' );
+
 	wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
 
 	wp_enqueue_style( 'child-style',
@@ -11,6 +13,9 @@ function my_theme_enqueue_styles() {
 		array( $parent_style ),
 		wp_get_theme()->get( 'Version' )
 	);
+	wp_register_script( 'custom-script', get_stylesheet_directory_uri() . '/search-ajax.js', array( 'jquery' ), '1.0', false );
+	wp_enqueue_script( 'custom-script' );
+	wp_localize_script('custom-script', 'admin_url', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 
 /** My Custom Functionality Coding*/
@@ -39,6 +44,7 @@ function post_type_blog() {
 	$args = array(
 		'labels'              => $labels,
 		'show_ui'             => true,
+		'show_in_rest'             => true,
 		'show_in_menu'        => true,
 		'query_var'           => true,
 		'hierarchical'        => false,
@@ -151,7 +157,6 @@ function save_metabox_callback( $post_id ) {
 	} else {
 		update_post_meta( $post_id, 'post_display_options', $value );
 	}
-
 }
 
 add_action( 'save_post', 'save_metabox_callback' );
@@ -169,7 +174,6 @@ function blog_count_dashboard_widget_function() {
         <th style="border: 2px solid;">Blog Name</th>
         <th style="border: 2px solid;">Count</th>
     </tr>
-
 	<?php
 
 	$args = array(
@@ -192,7 +196,6 @@ function blog_count_dashboard_widget_function() {
                 <td style="border: 2px solid; text-align: center"><?php echo $count_num; ?></td>
             </tr>
 		<?php
-
 		endwhile;
 		?>
         </table>
@@ -200,7 +203,6 @@ function blog_count_dashboard_widget_function() {
 	else :
 		echo( 'No Visit Count' );
 	endif;
-
 }
 
 // Function used in the action hook
@@ -210,7 +212,6 @@ function add_count_dashboard_widgets() {
 
 // Register the new dashboard widget with the 'wp_dashboard_setup' action
 add_action( 'wp_dashboard_setup', 'add_count_dashboard_widgets' );
-
 
 //Register Meta For Visit Count  Box on Page
 function page_display_visit_count_meta_box() {
@@ -378,3 +379,39 @@ class jy_first_widget extends WP_Widget {
 		return $instance;
 	}
 } // Class wpb_widget ends here
+
+//My API Learning
+
+function display_api_post() {
+	$single_post = isset( $_REQUEST['postid'] ) ? $_REQUEST['postid'] : ""  ;
+	$url_call = 'http://one.wordpress.test/wp-json/wp/v2/posts/'.$single_post;
+	$response_call = wp_remote_get( $url_call );
+	$data_call = wp_remote_retrieve_body($response_call);
+	$data_call = json_decode($data_call);
+
+	$title = !empty( $data_call->title->rendered ) ? $data_call->title->rendered : "No Title";
+	$content = !empty( $data_call->content->rendered ) ? $data_call->content->rendered : "No Content";
+	echo "<h2>".$title."</h2>";
+	echo "<p>".$content."</p>";
+    $author_url =  $data_call->_links->author[0]->href;
+	$response_author_call = wp_remote_get( $author_url );
+	$author_data_call = wp_remote_retrieve_body($response_author_call);
+	$author_data_call = json_decode($author_data_call);
+	$author = $author_data_call->name;
+	echo "<Strong>Author :</Strong>".$author;
+	$fields = (array) $data_call->_links;
+	$image_api_url =  $fields['wp:attachment'][0]->href;
+	$response_image_call = wp_remote_get( $image_api_url );
+	$image_data_call = wp_remote_retrieve_body($response_image_call);
+	$image_data_call = json_decode($image_data_call);
+	$img_url = $image_data_call[0]->guid->rendered;
+	echo "</br><img src='$img_url'>";
+    die();
+}
+
+add_action( 'wp_ajax_nopriv_display_api_post', 'display_api_post' );
+add_action( 'wp_ajax_display_api_post', 'display_api_post' );
+
+
+require_once( 'shortcode.php' );
+
