@@ -58,8 +58,25 @@ wp_reset_postdata();
             ?>
     </div>
     </div>
-
+<div class="api">
+        <h2>API</h2>
+<?php
+        //API Code Implementing
+    $url = 'http://one.wordpress.test/wp-json/wp/v2/posts';
+    $response = wp_remote_get( $url );
+    $data = wp_remote_retrieve_body($response);
+    $data = json_decode($data);
+?>
+<select id="selectpost">
+    <option value="">Select Post Name</option>
+<?php
+    foreach ($data as $datas){
+       if(isset($datas->title->rendered) && !empty($datas->title->rendered)){
+        ?><option value="<?php echo($datas->id); ?>"> <?php echo($datas->title->rendered);  ?> </option><?php }
+    }
+?>
+</select>
+</div>
 
 <?php
 get_footer();
-
