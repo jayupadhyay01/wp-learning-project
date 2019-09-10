@@ -2,7 +2,7 @@
 <?php
 global $wpdb;
 $table_name = $wpdb->prefix . "tgp_category";
-$cat_get_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_STRING);
+$cat_get_id = filter_input(INPUT_GET, 'cat_id', FILTER_SANITIZE_STRING);
 if(isset($cat_get_id) && !empty($cat_get_id)){
 	$get_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = '%s'", $cat_get_id));
 }

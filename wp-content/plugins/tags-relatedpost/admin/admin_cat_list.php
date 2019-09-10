@@ -1,9 +1,14 @@
 <div class="wrap">
 	<h2>Tags
 		<a class="add-new-h2" href="http://wp-learning.local.in/wp-admin/admin.php?page=category-entry">Add New</a>
-	</h2>
-	<div class="successmsg" style="display:none;"></div>
-	<p></p>
+	</h2><?php
+    $cat_msg_get = filter_input(INPUT_GET,'msg', FILTER_SANITIZE_STRING);
+   if( isset( $cat_msg_get ) ){
+        ?>
+            <div class="notice notice-<?php if( $cat_msg_get=="InsertedSuccessfully" ) { echo "success"; } elseif ( $cat_msg_get=="UpdatedSuccessfully" ){ echo "info"; } elseif ( $cat_msg_get=="AlreadyExist" ) { echo "error"; } ?> is-dismissible"><p><?php echo $cat_msg_get ?></p></div>
+       <?php
+   }
+?>
 	<form method="post" action="">
 		<table class="tagtable wp-list-table widefat fixed striped" width="100%">
 			<thead>
@@ -24,7 +29,7 @@
             ?>
             <tr id="cat-row-<?php echo $id ?>">
                 <td><?php echo $category ?></td>
-                <td colspan="2"><a href="<?php echo admin_url('admin.php?page=category-entry&id='.$id); ?>">Edit</a> | <a id="" class="delete_cat" href="#" onclick="tgp_delete_cat_row(<?php echo $id; ?>)">Delete</a></td>
+                <td colspan="2"><a href="<?php echo admin_url('admin.php?page=category-entry&cat_id='.$id); ?>">Edit</a> | <a id="" class="delete_cat" href="#" onclick="tgp_delete_cat_row(<?php echo $id; ?>)">Delete</a></td>
             </tr>
 <?php
 }
