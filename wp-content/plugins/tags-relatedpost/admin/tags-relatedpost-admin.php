@@ -17,9 +17,11 @@ class tags_relatedpost_admin_main_class {
 		wp_enqueue_script( 'validate-script' );
 		wp_register_script( 'custom-script', plugins_url( '/assets/js/tags-relatedpost-admin.js', __FILE__ ), false );
 		wp_enqueue_script( 'custom-script' );
+		wp_register_script( 'datatable-script', plugins_url( '/assets/js/jquery.dataTables.min.js', __FILE__ ), false );
+		wp_enqueue_script( 'datatable-script' );
 		wp_localize_script( 'custom-script', 'admin_url', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		wp_enqueue_style( 'style-plugin', plugins_url( '/assets/css/jquery.dataTables.min.css', __FILE__ ), false );
 		wp_enqueue_style( 'style-plugin', plugins_url( '/assets/css/tags-relatedpost-admin.css', __FILE__ ), false );
-
 	}
 
 	public function tgp_menu_pages() {
@@ -43,7 +45,6 @@ class tags_relatedpost_admin_main_class {
 			$cat_name = sanitize_text_field( $_POST['cat_name'] );
 			if ( $submit_cat == 'Add' ) {
 				$tgp_cat_check = $wpdb->get_results( "SELECT category FROM $table_name_cat WHERE category= '$cat_name' " );
-
 				if ( isset( $tgp_cat_check ) && ! empty( $tgp_cat_check ) ) {
 					$msg_cat = "Already Exist";
 				} else {
@@ -51,8 +52,13 @@ class tags_relatedpost_admin_main_class {
 					$msg_cat = 'Inserted Successfully';
 				}
 			} else {
-				$success = $wpdb->query( $wpdb->prepare( "UPDATE {$table_name_cat} SET category = %s WHERE id = %s ", $cat_name, $cat_get_id ) ); //Update
-				$msg_cat = 'Updated Successfully';
+				$tgp_cat_check = $wpdb->get_results( "SELECT category FROM $table_name_cat WHERE category= '$cat_name' " );
+				if ( isset( $tgp_cat_check ) && ! empty( $tgp_cat_check ) ) {
+					$msg_cat = "Already Exist";
+				} else {
+					$success = $wpdb->query( $wpdb->prepare( "UPDATE {$table_name_cat} SET category = %s WHERE id = %s ", $cat_name, $cat_get_id ) ); //Update
+					$msg_cat = 'Updated Successfully';
+				}
 			}
 			if ( $success ) {
 				wp_redirect( "admin.php?page=cateogry&msg='$msg_cat'" );
@@ -77,8 +83,13 @@ class tags_relatedpost_admin_main_class {
 					$msg_tag = 'Inserted Successfully';
 				}
 			} else {
-				$success = $wpdb->query( $wpdb->prepare( "UPDATE `$table_name_tag` SET `tag_name`= %s,`cat_id`=%d WHERE id = %d", $tag_name, $select_cat_id, $tag_get_id ) ); //Update
-				$msg_tag = 'Updated Successfully';
+				$tgp_tag_check = $wpdb->get_results( "SELECT tag_name FROM $table_name_tag WHERE tag_name ='$tag_name' " );
+				if ( isset( $tgp_tag_check ) && ! empty( $tgp_tag_check ) ) {
+					$msg_tag = 'TagName Already Exists';
+				} else {
+					$success = $wpdb->query( $wpdb->prepare( "UPDATE `$table_name_tag` SET `tag_name`= %s,`cat_id`=%d WHERE id = %d", $tag_name, $select_cat_id, $tag_get_id ) ); //Update
+					$msg_tag = 'Updated Successfully';
+				}
 			}
 			if ( $success ) {
 				wp_redirect( "admin.php?page=tags&msg='$msg_tag'" );
@@ -111,7 +122,6 @@ function tgp_tag_entry_menu() {
 	require_once( dirname( __FILE__ ) . '/admin_tag_form.php' );
 }
 
-
 /**
  *
  */
@@ -126,7 +136,6 @@ function tgp_delete_tag_action() {
 
 function tgp_delete_cat_action() {
 	$tgp_data_cat = filter_input( INPUT_POST, 'tgp_data_cat', FILTER_SANITIZE_STRING );
-
 	if ( isset( $tgp_data_cat ) ) {
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare( "DELETE FROM wp_tgp_category WHERE id = %d", array( $tgp_data_cat ) ) );

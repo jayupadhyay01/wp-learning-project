@@ -1,5 +1,5 @@
 <div class="wrap">
-    <h2>Tags
+    <h2>Categories
         <a class="add-new-h2" href="http://wp-learning.local.in/wp-admin/admin.php?page=category-entry">Add New</a>
     </h2>
     <div class="error notice is-dismissible" style="display:none;">
@@ -12,13 +12,13 @@
 		} elseif ( $cat_msg_get == "UpdatedSuccessfully" ) {
 			echo "info";
 		} elseif ( $cat_msg_get == "AlreadyExist" ) {
-			echo "error";
+			echo "warning";
 		} ?> is-dismissible"><p><?php echo $cat_msg_get ?></p></div>
 		<?php
 	}
 	?>
     <form method="post" action="">
-        <table class="tagtable wp-list-table widefat fixed striped" width="100%">
+        <table class="tagtable wp-list-table widefat fixed striped display" id="tgp_cat_list_table" width="100%">
             <thead>
             <tr>
                 <th width="80%"><a href="#">Categories</a></th>
@@ -55,3 +55,26 @@
         </table>
     </form>
 </div>
+<script type="text/javascript">
+    $ = jQuery;
+
+    $(document).ready(function () {
+        $('#tgp_cat_list_table').DataTable({
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "bPaginate": true,
+            "bFilter": true,
+            "bSort": true,
+            "aaSorting": [
+                [1, "asc"]
+            ],
+            "aoColumnDefs": [{
+                "bSortable": true,
+                "aTargets": [0]
+            }, {
+                "bSortable": true,
+                "aTargets": [1]
+            }],
+        });
+    });
+</script>

@@ -1,9 +1,31 @@
 var $ = jQuery;
 
+// $(document).ready(function () {
+//     $('#tgp_tag_list_table').DataTable({
+//         "bJQueryUI": true,
+//         "sPaginationType": "full_numbers",
+//         "bPaginate": true,
+//         "bFilter": true,
+//         "bSort": true,
+//         "aaSorting": [
+//             [1, "asc"]
+//         ],
+//         "aoColumnDefs": [{
+//             "bSortable": true,
+//             "aTargets": [0]
+//         }, {
+//             "bSortable": true,
+//             "aTargets": [1]
+//         }, {
+//             "bSortable": true,
+//             "aTargets": [2]
+//         }],
+//     });
+// });
+
+
 function tgp_delete_tag_row(id) {
-
     if (confirm('Are you sure ? ')) {
-
         jQuery.ajax({
             url: admin_url.ajax_url,
             data: {action: 'tgp_delete_tag_action', tgp_data_tag: id},
@@ -43,7 +65,9 @@ function tgp_delete_cat_row(id) {
     }
 }
 
+
 $(document).ready(function () {
+
     $('form[id="tgp_cat_submit_form"]').validate({
         rules: {
             cat_name: 'required',

@@ -9,16 +9,17 @@
 	if ( isset( $tag_msg_get ) ) {
 		?>
     <div class="notice notice-<?php if ( $tag_msg_get == "InsertedSuccessfully" ) {
+		echo "success";
 	} elseif ( $tag_msg_get == "UpdatedSuccessfully" ) {
 		echo "info";
 	} elseif ( $tag_msg_get == "TagNameAlreadyExists" ) {
-		echo "error";
+		echo "warning";
 	} ?> is-dismissible"><p><?php echo $tag_msg_get ?></p></div><?php
 	}
 	?>
     <p></p>
     <form method="post" action="/wp-admin/admin.php?page=tag_list">
-        <table class="tagtable wp-list-table widefat fixed striped" width="100%">
+        <table class="tagtable wp-list-table widefat fixed striped display" id="tgp_tag_list_table" width="100%">
             <thead>
             <tr>
                 <th width="43%"><a href="#">Tags</a></th>
@@ -49,5 +50,34 @@
                 </td>
             </tr>
 <?php
-}
+}?>
+            </tbody>
+        </table>
+    </form>
+</div>
+<script type="text/javascript">
+    $ = jQuery;
 
+    $(document).ready(function () {
+        $('#tgp_tag_list_table').DataTable({
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "bPaginate": true,
+            "bFilter": true,
+            "bSort": true,
+            "aaSorting": [
+                [1, "asc"]
+            ],
+            "aoColumnDefs": [{
+                "bSortable": true,
+                "aTargets": [0]
+            }, {
+                "bSortable": true,
+                "aTargets": [1]
+            }, {
+                "bSortable": true,
+                "aTargets": [2]
+            }],
+        });
+    });
+</script>
