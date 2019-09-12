@@ -1,7 +1,7 @@
 var $ = jQuery;
 
 // $(document).ready(function () {
-//     $('#tgp_tag_list_table').DataTable({
+//     $('#trp_tag_list_table').DataTable({
 //         "bJQueryUI": true,
 //         "sPaginationType": "full_numbers",
 //         "bPaginate": true,
@@ -24,14 +24,14 @@ var $ = jQuery;
 // });
 
 
-function tgp_delete_tag_row(id) {
+function trp_delete_tag_row(id) {
     if (confirm('Are you sure ? ')) {
         jQuery.ajax({
             url: admin_url.ajax_url,
-            data: {action: 'tgp_delete_tag_action', tgp_data_tag: id},
+            data: {action: 'trp_delete_tag_action', trp_data_tag: id},
             type: 'post',
 
-            success: function (tgp_data_tag) {
+            success: function (trp_data_tag) {
                 $("#tag-row-" + id).fadeOut();
                 $(".error").show();
                 $(".error").html("<p>Sucessfully Deleted</p>");
@@ -44,16 +44,16 @@ function tgp_delete_tag_row(id) {
     }
 }
 
-function tgp_delete_cat_row(id) {
+function trp_delete_cat_row(id) {
 
     if (confirm('Are you sure ? ')) {
 
         jQuery.ajax({
             url: admin_url.ajax_url,
-            data: {action: 'tgp_delete_cat_action', tgp_data_cat: id},
+            data: {action: 'trp_delete_cat_action', trp_data_cat: id},
             type: 'post',
 
-            success: function (tgp_data_cat) {
+            success: function (trp_data_cat) {
                 $("#cat-row-" + id).fadeOut();
                 $(".error").show();
                 $(".error").html("<p>Sucessfully Deleted</p>");
@@ -68,7 +68,7 @@ function tgp_delete_cat_row(id) {
 
 $(document).ready(function () {
 
-    $('form[id="tgp_cat_submit_form"]').validate({
+    $('form[id="trp_cat_submit_form"]').validate({
         rules: {
             cat_name: 'required',
         },
@@ -79,7 +79,7 @@ $(document).ready(function () {
             form.submit();
         }
     });
-    $('form[id="tgp_tag_submit_form"]').validate({
+    $('form[id="trp_tag_submit_form"]').validate({
         rules: {
             tag_name: {
                 required: true,

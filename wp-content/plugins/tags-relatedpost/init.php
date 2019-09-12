@@ -16,8 +16,8 @@ function tags_relatedpost_install() {
 
 	global $wpdb;
 
-	$table_name_1 = $wpdb->prefix . "tgp_category";
-	$table_name_2 = $wpdb->prefix . "tgp_tag";
+	$table_name_1 = $wpdb->prefix . "trp_category";
+	$table_name_2 = $wpdb->prefix . "trp_tag";
 
 	$charset_collate = $wpdb->get_charset_collate();
 

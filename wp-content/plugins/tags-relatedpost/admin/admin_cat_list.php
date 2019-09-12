@@ -18,7 +18,7 @@
 	}
 	?>
     <form method="post" action="">
-        <table class="tagtable wp-list-table widefat fixed striped display" id="tgp_cat_list_table" width="100%">
+        <table class="tagtable wp-list-table widefat fixed striped display" id="trp_cat_list_table" width="100%">
             <thead>
             <tr>
                 <th width="80%"><a href="#">Categories</a></th>
@@ -28,7 +28,7 @@
             <tbody>
 			<?php
 			global $wpdb;
-			$table_name = $wpdb->prefix . "tgp_category";
+			$table_name = $wpdb->prefix . "trp_category";
 			$data       = $wpdb->get_results( "SELECT * FROM $table_name" );
 
 			foreach ( $data as $result ) {
@@ -39,7 +39,7 @@
                     <td><?php echo $category ?></td>
                     <td colspan="2"><a href="<?php echo admin_url( 'admin.php?page=category-entry&cat_id=' . $id ); ?>">Edit</a>
                         | <a id="" class="delete_cat" href="#"
-                             onclick="tgp_delete_cat_row(<?php echo $id; ?>)">Delete</a></td>
+                             onclick="trp_delete_cat_row(<?php echo $id; ?>)">Delete</a></td>
                 </tr>
 				<?php
 			}
@@ -59,7 +59,7 @@
     $ = jQuery;
 
     $(document).ready(function () {
-        $('#tgp_cat_list_table').DataTable({
+        $('#trp_cat_list_table').DataTable({
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
             "bPaginate": true,

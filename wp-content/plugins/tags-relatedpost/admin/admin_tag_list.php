@@ -18,8 +18,8 @@
 	}
 	?>
     <p></p>
-    <form method="post" action="/wp-admin/admin.php?page=tag_list">
-        <table class="tagtable wp-list-table widefat fixed striped display" id="tgp_tag_list_table" width="100%">
+    <form method="post" action="">
+        <table class="tagtable wp-list-table widefat fixed striped display" id="trp_tag_list_table"  width="100%">
             <thead>
             <tr>
                 <th width="43%"><a href="#">Tags</a></th>
@@ -31,26 +31,26 @@
 			<?php
 
 			global $wpdb;
-			$table_name_tag = $wpdb->prefix . "tgp_tag";
-			$table_name_cat = $wpdb->prefix . "tgp_category";
+			$table_name_tag = $wpdb->prefix . "trp_tag";
+			$table_name_cat = $wpdb->prefix . "trp_category";
 			$data           = $wpdb->get_results( "SELECT * FROM $table_name_cat JOIN $table_name_tag ON $table_name_cat.id = $table_name_tag.cat_id" );
 
 			foreach ( $data
 
-			as $result ) {
-			$id       = $result->id;
-			$tag      = $result->tag_name;
-			$category = $result->category;
-			?>
-            <tr id="tag-row-<?php echo $id ?>">
-                <td><?php echo $tag ?></td>
-                <td><?php echo $category ?></td>
-                <td colspan="2"><a href="<?php echo admin_url( 'admin.php?page=tag-entry&tag_id=' . $id ); ?>">Edit</a>
-                    | <a id="" class="delete_cat" href="#" onclick="tgp_delete_tag_row(<?php echo $id; ?>)">Delete</a>
-                </td>
-            </tr>
-<?php
-}?>
+				as $result ) {
+				$id       = $result->id;
+				$tag      = $result->tag_name;
+				$category = $result->category;
+				?>
+                <tr id="tag-row-<?php echo $id ?>">
+                    <td><?php echo $tag ?></td>
+                    <td><?php echo $category ?></td>
+                    <td colspan="2"><a href="<?php echo admin_url( 'admin.php?page=tag-entry&tag_id=' . $id ); ?>">Edit</a>
+                        | <a id="" class="delete_cat" href="#" onclick="trp_delete_tag_row(<?php echo $id; ?>)">Delete</a>
+                    </td>
+                </tr>
+				<?php
+			}?>
             </tbody>
         </table>
     </form>
@@ -59,7 +59,7 @@
     $ = jQuery;
 
     $(document).ready(function () {
-        $('#tgp_tag_list_table').DataTable({
+        $('#trp_tag_list_table').DataTable({
             "bJQueryUI": true,
             "sPaginationType": "full_numbers",
             "bPaginate": true,

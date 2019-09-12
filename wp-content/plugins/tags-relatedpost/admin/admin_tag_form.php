@@ -1,13 +1,13 @@
 <h2>Tags Entry</h2>
 <?php
 global $wpdb;
-$table_name_tag = $wpdb->prefix . "tgp_tag";
+$table_name_tag = $wpdb->prefix . "trp_tag";
 $tag_get_id     = filter_input( INPUT_GET, 'tag_id', FILTER_SANITIZE_STRING );
 if ( isset( $tag_get_id ) && ! empty( $tag_get_id ) ) {
 	$get_tag_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name_tag WHERE id = '%s'", $tag_get_id ) );
 } ?>
 <div class="wrapper">
-    <form action="" method="post" name="tgp_tag_submit_form" id="tgp_tag_submit_form"><br>
+    <form action="" method="post" name="trp_tag_submit_form" id="trp_tag_submit_form"><br>
         <div>
             <label for="tag_name">Tag Name:</label><br>
             <input type="text"
@@ -18,7 +18,7 @@ if ( isset( $tag_get_id ) && ! empty( $tag_get_id ) ) {
             <select name="cat_select" id="cat_select">
                 <option value="">Select Category</option>
 				<?php
-				$table_name_cat = $wpdb->prefix . "tgp_category";
+				$table_name_cat = $wpdb->prefix . "trp_category";
 				$cat_data       = $wpdb->get_results( "SELECT * FROM $table_name_cat" );
 				foreach ( $cat_data as $result ) {
 					$id       = $result->id;
@@ -31,8 +31,8 @@ if ( isset( $tag_get_id ) && ! empty( $tag_get_id ) ) {
         </div>
         <div>
 
-            <input type="submit" value="<?php echo isset( $tag_get_id ) ? 'Update' : 'Add'; ?>" name="tgp_tag_submit"
-                   id="tgp_tag_submit" class="button-primary">
+            <input type="submit" value="<?php echo isset( $tag_get_id ) ? 'Update' : 'Add'; ?>" name="trp_tag_submit"
+                   id="trp_tag_submit" class="button-primary">
         </div>
     </form>
 </div>
