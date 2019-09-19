@@ -1,3 +1,4 @@
+<!--Tags entry form admin side.-->
 <h2>Tags Entry</h2>
 <?php
 global $wpdb;
@@ -30,7 +31,6 @@ if ( isset( $tag_get_id ) && ! empty( $tag_get_id ) ) {
             </select>
         </div>
         <div>
-
             <input type="submit" value="<?php echo isset( $tag_get_id ) ? 'Update' : 'Add'; ?>" name="trp_tag_submit"
                    id="trp_tag_submit" class="button-primary">
         </div>

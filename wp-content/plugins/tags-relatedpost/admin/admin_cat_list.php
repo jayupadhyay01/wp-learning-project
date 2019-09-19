@@ -57,7 +57,6 @@
 </div>
 <script type="text/javascript">
     $ = jQuery;
-
     $(document).ready(function () {
         $('#trp_cat_list_table').DataTable({
             "bJQueryUI": true,
