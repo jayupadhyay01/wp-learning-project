@@ -34,7 +34,6 @@ get_header();
                         add_post_meta(get_the_ID(), $key, 1);
                     }
                 }
-
                 //END OF Custom Blogs Counter Functionality.
 
                 if (is_singular('attachment')) {
@@ -66,9 +65,9 @@ get_header();
 
             endwhile; // End of the loop.
             ?>
-
         </main><!-- #main -->
     </section><!-- #primary -->
 
 <?php
+get_sidebar();
 get_footer();

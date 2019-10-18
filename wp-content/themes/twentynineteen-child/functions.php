@@ -1,5 +1,4 @@
 <?php
-
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
 function my_theme_enqueue_styles() {
 	$parent_style = 'parent-style'; // This is 'twentynineteen-style' for the Twenty Nineteen theme.
@@ -16,7 +15,23 @@ function my_theme_enqueue_styles() {
 	wp_register_script( 'custom-script', get_stylesheet_directory_uri() . '/search-ajax.js', array( 'jquery' ), '1.0', false );
 	wp_enqueue_script( 'custom-script' );
 	wp_localize_script('custom-script', 'admin_url', array('ajax_url' => admin_url('admin-ajax.php')));
+
 }
+
+//Sidebar Register
+add_action( 'widgets_init', 'trp_sidebar_widgets_init' );
+function trp_sidebar_widgets_init() {
+	register_sidebar( array(
+		'name' => __( 'TRP Sidebar ', 'trp-sidebar' ),
+		'id' => 'trp-sidebar-1',
+		'description' => __( 'Widgets in this area will be shown on all posts and pages.', 'trp-sidebar' ),
+		'before_widget' => '<li id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</li>',
+		'before_title'  => '<h2 class="widgettitle">',
+		'after_title'   => '</h2>',
+	) );
+}
+
 
 /** My Custom Functionality Coding*/
 
@@ -132,10 +147,8 @@ add_action( 'add_meta_boxes', 'display_settings_meta_box' );
 
 //Add field
 function display_settings_box_callback( $meta_id ) {
-
 	$title_field = get_post_meta( $meta_id->ID, 'post_display_options', true );
-
-	// check title_field is empty or not and set as yes
+// check title_field is empty or not and set as yes
 	?>
     <label for="title_field"
            style="width:250px; display:inline-block;"><?php echo esc_html__( 'Do You Want To Display This Blog In Listings?', 'text-domain' ); ?>
@@ -259,7 +272,6 @@ class jy_first_widget extends WP_Widget {
 	}
 
 // Creating widget front-end
-
 	public function widget( $args, $instance ) {
 
 		$display_widget_option = $instance['display_widget_option'];
@@ -412,6 +424,80 @@ function display_api_post() {
 add_action( 'wp_ajax_nopriv_display_api_post', 'display_api_post' );
 add_action( 'wp_ajax_display_api_post', 'display_api_post' );
 
-
 require_once( 'shortcode.php' );
 
+// Registering custom widget for TRP plugin.
+
+// Register and load the widget
+function trp_load_widget() {
+	register_widget( 'trp_related_post_widget' );
+}
+
+add_action( 'widgets_init', 'trp_load_widget' );
+
+// Creating My Custom widget
+class trp_related_post_widget extends WP_Widget {
+	function __construct() {
+		parent::__construct(
+
+// Base ID of TRP widget
+			'trp_related_post_widget',
+
+// Widget name will appear in UI
+			__( 'TRP Plugin Related Posts ', 'trp_related_post_widget_domain' ),
+
+// Widget description
+			array( 'description' => __( 'TRP Plugin- Article by Related Posts Widget', 'trp_related_post_widget_domain' ), )
+		);
+	}
+
+	public function widget( $args, $trp_instance ) {
+	   ?>
+        <div class="custom-widget-one">
+        <h2><?php echo $trp_instance['trp_title'] ?></h2>
+        <h5><?php echo $trp_instance['trp_upper_tag_line'] ?></h5>
+        <h5><?php echo $trp_instance['trp_lower_tag_line'] ?></h5>
+        </div>
+        <?php
+    }
+
+
+	public function form( $trp_instance ) {
+		if ( isset( $trp_instance['trp_title'] ) && isset( $trp_instance['trp_upper_tag_line'] ) && isset( $trp_instance['trp_lower_tag_line'] ) ) {
+			$trp_title    = $trp_instance['trp_title'];
+			$trp_upper_tag_line = $trp_instance['trp_upper_tag_line'];
+			$trp_lower_tag_line = $trp_instance['trp_lower_tag_line'];
+		} else {
+			$trp_title    = __( 'New title', 'trp_related_post_widget_domain' );
+			$trp_upper_tag_line = __( 'New Upper Tag Line', 'trp_related_post_widget_domain' );
+			$trp_lower_tag_line = __( 'New Lower Tag Line', 'trp_related_post_widget_domain' );
+		}?>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'trp_title' ); ?>"><?php _e( 'Title:' ); ?></label>
+                <input class="widefat" id="<?php echo $this->get_field_id( 'trp_title' ); ?>"
+                       name="<?php echo $this->get_field_name( 'trp_title' ); ?>" type="text"
+                       value="<?php echo esc_attr( $trp_title ); ?>"/>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'trp_upper_tag_line' ); ?>"><?php _e( 'Upper TagLine:' ); ?></label>
+                <input class="widefat" id="<?php echo $this->get_field_id( 'trp_upper_tag_line' ); ?>"
+                       name="<?php echo $this->get_field_name( 'trp_upper_tag_line' ); ?>" type="text"
+                       value="<?php echo esc_attr( $trp_upper_tag_line ); ?>"/>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id( 'trp_lower_tag_line' ); ?>"><?php _e( 'Lower TagLine:' ); ?></label>
+                <input class="widefat" id="<?php echo $this->get_field_id( 'trp_lower_tag_line' ); ?>"
+                       name="<?php echo $this->get_field_name( 'trp_lower_tag_line' ); ?>" type="text"
+                       value="<?php echo esc_attr( $trp_lower_tag_line ); ?>"/>
+            </p>
+            <?php
+    }
+
+	public function update( $trp_new_instance, $trp_old_instance ) {
+		$trp_instance                          = array();
+		$trp_instance['trp_title']                 = ( ! empty( $trp_new_instance['trp_title'] ) ) ? strip_tags( $trp_new_instance['trp_title'] ) : '';
+		$trp_instance['trp_upper_tag_line']              = ( ! empty( $trp_new_instance['trp_upper_tag_line'] ) ) ? strip_tags( $trp_new_instance['trp_upper_tag_line'] ) : '';
+		$trp_instance['trp_lower_tag_line']              = ( ! empty( $trp_new_instance['trp_lower_tag_line'] ) ) ? strip_tags( $trp_new_instance['trp_lower_tag_line'] ) : '';
+		return $trp_instance;
+    }
+}

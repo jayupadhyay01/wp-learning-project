@@ -38,4 +38,29 @@ $(document).ready(function () {
         });
 
     });
+
+    var inputBox = document.getElementById('textinput');
+    inputBox.onkeyup = function(){
+        document.getElementById('displaytext').innerHTML = inputBox.value;
+    }
+
+    //Jquery Code
+    // $('#btn-text-show').click(function () {
+    //     $('#displaytext').show();
+    // });
+    // $('#btn-text-hide').click(function () {
+    //     $('#displaytext').hide();
+    // });
+
+
 });
+
+function texthideshow() {
+    if(click) {
+        var j = document.getElementById("displaytext");
+        j.style.visibility = "hidden";
+        console.log(j);
+    }
+
+}
+
